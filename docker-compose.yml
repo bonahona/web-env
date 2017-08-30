@@ -1,0 +1,120 @@
+version: '2'
+services:
+  traefik:
+    image: traefik
+    command: --web --docker --docker.domain=fyrvall.com --logLevel=DEBUG
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+
+
+  fyrvall-mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    volumes: 
+      - fyrvall-mysql-data:/var/lib/mysql/data
+  
+  fyrvall-site:
+    build: ../sites/Fyrvall
+    depends_on:
+     - fyrvall-mysql
+    expose:
+      - "80"
+    labels:
+      - traefik.frontend.rule=Host:fyrvall.com
+
+  auth-mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    expose:
+      - "3306"
+    ports:
+      - "3307:3306"
+    volumes:
+      - auth-mysql-data:/var/lib/mysql/data
+
+  auth-site:
+    build: ../sites/Auth
+    depends_on:
+      - auth-mysql
+    expose:
+      - "80"
+    labels:
+      - traefik.frontend.rule=Host:auth.fyrvall.com
+
+  manage-mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    expose:
+      - "3306"
+    ports:
+      - "3308:3306"
+    volumes:
+      - manage-mysql-data:/var/lib/mysql/data
+
+  manage-site:
+    build: ../sites/Manage
+    depends_on:
+      - manage-mysql
+    expose:
+      - "80"
+    labels:
+      - traefik.frontend.rule=Host:manage.fyrvall.com
+
+  documentation-mysql:
+    image: mysql
+    environment: 
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    expose:
+      - "3306"
+    ports:
+      - "3309:3306"
+    volumes:
+      - documentation-mysql-data:/var/lib/mysql/data
+
+  documentation-site:
+    build: ../sites/Documentation
+    depends_on:
+      - documentation-mysql
+    expose:
+      - "80"
+    labels:
+      - traefik.frontend.rule=Host:documentation.fyrvall.com
+
+  share-mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+    expose:
+      - "3306"
+    ports:
+      - "3310:3306"
+
+  share-site:
+    build: ../sites/Share
+    depends_on:
+      - share-mysql
+    expose: 
+      - "80"
+    labels:
+      - traefik.frontend.rule=Host:share.fyrvall.com
+    volumes:
+      - share-site-uploads:/var/uploads
+
+volumes:
+  fyrvall-mysql-data:
+  auth-mysql-data:
+  manage-mysql-data:
+  documentation-mysql-data:
+  share-mysql-data:
+  share-site-uploads:

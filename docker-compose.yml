@@ -2,7 +2,7 @@ version: '2'
 services:
   traefik:
     image: traefik
-    command: --web --docker --docker.domain=fyrvall.com --logLevel=DEBUG
+    command: --web --docker --docker.domain=${LOCAL_DOMAIN} --logLevel=DEBUG
     ports:
       - "80:80"
       - "8080:8080"
@@ -19,8 +19,6 @@ services:
       - "3306"
     ports:
       - "3306:3306"
-    volumes: 
-      - fyrvall-mysql-data:/var/lib/mysql/data
   
   fyrvall-site:
     build: ../sites/Fyrvall
@@ -29,7 +27,7 @@ services:
     expose:
       - "80"
     labels:
-      - traefik.frontend.rule=Host:fyrvall.com
+      - traefik.frontend.rule=Host:${LOCAL_DOMAIN}
 
   auth-mysql:
     image: mysql
@@ -39,8 +37,6 @@ services:
       - "3306"
     ports:
       - "3307:3306"
-    volumes:
-      - auth-mysql-data:/var/lib/mysql/data
 
   auth-site:
     build: ../sites/Auth
@@ -49,7 +45,7 @@ services:
     expose:
       - "80"
     labels:
-      - traefik.frontend.rule=Host:auth.fyrvall.com
+      - traefik.frontend.rule=Host:auth.${LOCAL_DOMAIN}
 
   manage-mysql:
     image: mysql
@@ -59,8 +55,6 @@ services:
       - "3306"
     ports:
       - "3308:3306"
-    volumes:
-      - manage-mysql-data:/var/lib/mysql/data
 
   manage-site:
     build: ../sites/Manage
@@ -69,7 +63,7 @@ services:
     expose:
       - "80"
     labels:
-      - traefik.frontend.rule=Host:manage.fyrvall.com
+      - traefik.frontend.rule=Host:manage.${LOCAL_DOMAIN}
 
   documentation-mysql:
     image: mysql
@@ -79,8 +73,6 @@ services:
       - "3306"
     ports:
       - "3309:3306"
-    volumes:
-      - documentation-mysql-data:/var/lib/mysql/data
 
   documentation-site:
     build: ../sites/Documentation
@@ -89,7 +81,7 @@ services:
     expose:
       - "80"
     labels:
-      - traefik.frontend.rule=Host:documentation.fyrvall.com
+      - traefik.frontend.rule=Host:documentation.${LOCAL_DOMAIN}
 
   share-mysql:
     image: mysql
@@ -99,6 +91,8 @@ services:
       - "3306"
     ports:
       - "3310:3306"
+#    volumes:
+#      - share-mysql-data:/var/lib/mysql
 
   share-site:
     build: ../sites/Share
@@ -107,10 +101,19 @@ services:
     expose: 
       - "80"
     labels:
-      - traefik.frontend.rule=Host:share.fyrvall.com
+      - traefik.frontend.rule=Host:share.${LOCAL_DOMAIN}
     volumes:
       - share-site-uploads:/var/uploads
 
+  unity-packer:
+    build: ../sites/unity-packer
+    depends_on:
+      - traefik
+    expose:
+      - "80"
+    labels:
+      - traefik.frontend.rule=Host:unitypacker.${LOCAL_DOMAIN}
+      
 volumes:
   fyrvall-mysql-data:
   auth-mysql-data:

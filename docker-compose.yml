@@ -41,6 +41,7 @@ services:
   auth-site:
     build: ../sites/Auth
     depends_on:
+      - traefik
       - auth-mysql
     expose:
       - "80"
@@ -89,7 +90,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
     expose:
       - "3306"
-    ports:
+    ports: 
       - "3310:3306"
 #    volumes:
 #      - share-mysql-data:/var/lib/mysql
@@ -137,6 +138,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       
+  lunch:
+    build: ../sites/lunch
+    depends_on:
+      - traefik
+    expose:
+      - "80"
+    labels:
+      - traefik.frontend.rule=Host:lunch.${LOCAL_DOMAIN}
 volumes:
   fyrvall-mysql-data:
   auth-mysql-data:

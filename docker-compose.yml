@@ -15,10 +15,13 @@ services:
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: fyrvall
     expose:
       - "3306"
     ports:
       - "3306:3306"
+    volumes:
+      - fyrvall-mysql-data:/var/lib/mysql
   
   fyrvall-site:
     build: ../sites/Fyrvall
@@ -33,10 +36,13 @@ services:
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: auth
     expose:
       - "3306"
     ports:
       - "3307:3306"
+    volumes:
+      - auth-mysql-data:/var/lib/mysql
 
   auth-site:
     build: ../sites/Auth
@@ -47,15 +53,20 @@ services:
       - "80"
     labels:
       - traefik.frontend.rule=Host:auth.${LOCAL_DOMAIN}
+     
 
   manage-mysql:
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: manage
     expose:
       - "3306"
     ports:
       - "3308:3306"
+    volumes:
+      - manage-mysql-data:/var/lib/mysql
+    
 
   manage-site:
     build: ../sites/Manage
@@ -70,10 +81,13 @@ services:
     image: mysql
     environment: 
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: documentation
     expose:
       - "3306"
     ports:
       - "3309:3306"
+    volumes:
+      - documentation-mysql-data:/var/lib/mysql
 
   documentation-site:
     build: ../sites/Documentation
@@ -88,12 +102,13 @@ services:
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: share
     expose:
       - "3306"
     ports: 
       - "3310:3306"
-#    volumes:
-#      - share-mysql-data:/var/lib/mysql
+    volumes:
+      - share-mysql-data:/var/lib/mysql
 
   share-site:
     build: ../sites/Share
@@ -146,6 +161,7 @@ services:
       - "80"
     labels:
       - traefik.frontend.rule=Host:lunch.${LOCAL_DOMAIN}
+      
 volumes:
   fyrvall-mysql-data:
   auth-mysql-data:

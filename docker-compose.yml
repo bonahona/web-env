@@ -12,6 +12,7 @@ services:
 
 
   fyrvall-mysql:
+    container_name: fyrvall-mysql
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
@@ -24,6 +25,7 @@ services:
       - fyrvall-mysql-data:/var/lib/mysql
   
   fyrvall-site:
+    container_name: fyrvall-site
     build: ../sites/Fyrvall
     depends_on:
      - fyrvall-mysql
@@ -33,6 +35,7 @@ services:
       - traefik.frontend.rule=Host:${LOCAL_DOMAIN}
 
   auth-mysql:
+    container_name: auth-mysql
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
@@ -45,6 +48,7 @@ services:
       - auth-mysql-data:/var/lib/mysql
 
   auth-site:
+    container_name: auth-site
     build: ../sites/Auth
     depends_on:
       - traefik
@@ -56,6 +60,7 @@ services:
      
 
   manage-mysql:
+    container_name: manage-mysql
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
@@ -69,6 +74,7 @@ services:
     
 
   manage-site:
+    container_name: manage-site
     build: ../sites/Manage
     depends_on:
       - manage-mysql
@@ -78,6 +84,7 @@ services:
       - traefik.frontend.rule=Host:manage.${LOCAL_DOMAIN}
 
   documentation-mysql:
+    container_name: documentation-mysql
     image: mysql
     environment: 
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
@@ -90,6 +97,7 @@ services:
       - documentation-mysql-data:/var/lib/mysql
 
   documentation-site:
+    container_name: documentation-site
     build: ../sites/Documentation
     depends_on:
       - documentation-mysql
@@ -99,6 +107,7 @@ services:
       - traefik.frontend.rule=Host:documentation.${LOCAL_DOMAIN}
 
   share-mysql:
+    container_name: share-mysql
     image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
@@ -111,6 +120,7 @@ services:
       - share-mysql-data:/var/lib/mysql
 
   share-site:
+    container_name: share-site
     build: ../sites/Share
     depends_on:
       - share-mysql
@@ -122,6 +132,7 @@ services:
       - share-site-uploads:/var/uploads
 
   unity-packer:
+    container_name: unity-packer
     build: ../sites/unity-packer
     depends_on:
       - traefik

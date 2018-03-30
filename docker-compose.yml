@@ -136,6 +136,8 @@ services:
       - traefik.frontend.rule=Host:share.${LOCAL_DOMAIN}
     volumes:
       - share-site-uploads:/var/www/html/uploads
+    environment:
+      PRE_SHARED_KEY: ${PRE_SHARED_KEY}
 
   unity-packer:
     container_name: unity-packer

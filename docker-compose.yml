@@ -171,6 +171,31 @@ services:
       - traefik.frontend.rule=Host:webhookforwarder.${LOCAL_DOMAIN}
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+     
+  dev-blog-mysql:
+    container_name: dev-blog-mysql
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: dev-blog
+      MYSQL_AIO: 0
+    expose:
+      - "3306"
+    ports:
+      - "3312:3306"   
+      
+  dev-blog-site:
+    container_name: dev-blog-site
+    build: ../sites/dev-blog
+    depends_on:
+      - dev-blog-mysql
+      - traefik
+    expose:
+      - "80"
+    labels:
+      - traefik.frontend.rule=Host:dev-blog.${LOCAL_DOMAIN}
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
       
 volumes:
   fyrvall-mysql-data:
